@@ -1,7 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const SpotifyWebApi = require('spotify-web-api-node');
-const RedisStore = require('connect-redis')(session);
+const connectRedis = require('connect-redis');
+const RedisStore = connectRedis(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -59,6 +60,11 @@ app.get('/create-playlist', async (req, res) => {
     res.send(err);
   }
 });
+
+app.get('*', (req, res) => {
+  res.status(404).send('Page not found');
+});
+
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://localhost:${PORT}`);
