@@ -1,9 +1,20 @@
 const express = require('express');
 const session = require('express-session');
 const SpotifyWebApi = require('spotify-web-api-node');
+const RedisStore = require('connect-redis')(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(session({
+    store: new RedisStore({
+        // Add your Redis configuration here, for Heroku you can use process.env.REDIS_URL
+        url: process.env.REDIS_URL
+    }),
+    secret: 'some-random-string',
+    resave: false,
+    saveUninitialized: true
+}));
 
 // Spotify API setup
 const spotifyApi = new SpotifyWebApi({
@@ -49,6 +60,7 @@ app.get('/create-playlist', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
